@@ -37,6 +37,20 @@ async function run() {
         console.log(result);
         res.send(result);
       });
+      app.patch("/course/update", async (req, res) => {
+        const id = req.query.id;
+        console.log(id);
+        const filter = { _id: new ObjectId(id) };
+  
+        const pathData = {
+          $inc: {
+            like: +1,
+          },
+        };
+        const result = await courseCollection.updateOne(filter, pathData);
+        console.log(result);
+        res.send(result);
+      });
       // user course buy api 
       app.post('/userCourse', async (req,res) => {
         const query = req.body
@@ -44,11 +58,14 @@ async function run() {
         res.send(result)
       })
       app.get("/userCourse", async (req, res) => {
-        const query = req.body.email
-        console.log(query);
-        const result = await userCourseeCollection.find(query).toArray();
+        const query = req.query?.email
+        const filter = {userEmail : query}
+        console.log('email',query);
+        const result = await userCourseeCollection.find(filter).toArray();
         res.send(result);
       });
+
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
